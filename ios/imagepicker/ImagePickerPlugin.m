@@ -11,7 +11,7 @@
 @end
 @implementation ImagePickerPlugin
 {
-    
+    TZImagePickerController *imagePickerVc;
 }
 UIViewController *_viewController;
 - (instancetype)initWithViewController:(UIViewController *)viewController {
@@ -34,18 +34,36 @@ UIViewController *_viewController;
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     self.result=result;
     if ([@"getGallery" isEqualToString:call.method]) {
-        TZImagePickerController *imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:9 delegate:self];
+          imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:9 delegate:self];
         // 是否显示可选原图按钮
           imagePickerVc.allowPickingOriginalPhoto = YES;
           // 是否允许显示视频
           imagePickerVc.allowPickingVideo = YES;
           // 是否允许显示图片
           imagePickerVc.allowPickingImage = YES;
-
+    }else if([@"getVideo" isEqualToString:call.method]){
+        imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:9 delegate:self];
+            // 是否显示可选原图按钮
+              imagePickerVc.allowPickingOriginalPhoto = YES;
+              // 是否允许显示视频
+              imagePickerVc.allowPickingVideo = YES;
+              // 是否允许显示图片
+              imagePickerVc.allowPickingImage = NO;
+    }else if([@"getImage" isEqualToString:call.method]){
+        imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:9 delegate:self];
+            // 是否显示可选原图按钮
+              imagePickerVc.allowPickingOriginalPhoto = YES;
+              // 是否允许显示视频
+              imagePickerVc.allowPickingVideo = NO;
+              // 是否允许显示图片
+              imagePickerVc.allowPickingImage = YES;
+    }else{
+        
+    }
         // You can get the photos by block, the same as by delegate.
         // 你可以通过block或者代理，来得到用户选择的照片.
         [_viewController presentViewController:imagePickerVc animated:YES completion:nil];
-    }
+    
 }
 
 - (void)imagePickerController:(TZImagePickerController *)picker didFinishPickingPhotos:(NSArray<UIImage *> *)photos sourceAssets:(NSArray *)assets isSelectOriginalPhoto:(BOOL)isSelectOriginalPhoto infos:(NSArray<NSDictionary *> *)infos{
@@ -69,6 +87,10 @@ UIViewController *_viewController;
 -(void)imagePickerController:(TZImagePickerController *)picker
        didFinishPickingVideo:(UIImage *)coverImage
                 sourceAssets:(PHAsset *)asset{
+    
+}
+
+-(void) tzImagePicker:(Boolean *)flag{
     
 }
     
