@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/services.dart';
 
 const String kTypeImage = 'image';
@@ -15,11 +16,17 @@ enum ImageSource {
 
 class MultiImagePicker {
   static const MethodChannel _channel =
-  const MethodChannel('plugins.flutter.io/image_picker');
+      const MethodChannel('plugins.flutter.io/image_picker');
 
-  static Future pickImageAndVideo() {
-    return _channel.invokeMethod('getGallery');
+  static Future pickImageAndVideo() async {
+    return await _channel.invokeMethod('getGallery');
   }
 
+  static Future pickImage() async {
+    return await _channel.invokeMethod('getImage');
+  }
 
+  static Future pickVideo() async {
+    return await _channel.invokeMethod('getVideo');
+  }
 }
