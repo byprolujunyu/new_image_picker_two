@@ -6,7 +6,9 @@ class MultiImagePicker {
   static const MethodChannel _channel =
   const MethodChannel('plugins.flutter.io/image_picker');
 
-  static Future pickImages() {
+  static Future pickImageAndVideo() {
     return _channel.invokeMethod('getGallery');
   }
+
+  
 }
