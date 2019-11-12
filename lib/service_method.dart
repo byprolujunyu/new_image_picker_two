@@ -20,17 +20,6 @@ class _HomeState extends State<Home> {
 
   void _getGallery() async {
     var list = await MultiImagePicker.pickImageAndVideo();
-    print(list);
-    if(list == null)return;
-    if (list[0] is String) {
-      setState(() {
-        isType = false;
-      });
-    } else {
-      setState(() {
-        isType = true;
-      });
-    }
     setState(() {
       datas = list;
     });
@@ -56,62 +45,25 @@ class _HomeState extends State<Home> {
       body: GridView.count(
         crossAxisCount: 4,
         padding: EdgeInsets.all(5.0),
-        children: getWidges(),
+        children: datas.map((path) {
+          return getWidges(path);
+        }).toList(),
       ),
     );
   }
 
-  List<Widget> getWidges() {
-    List<Widget> ws = List();
-    if(isType){
-      if (datas != null && datas.length > 0) {
-        for (Uint8List path in datas) {
-          var w = GestureDetector(
-            onTap: () {
-//            Navigator.of(context)
-//                .push(MaterialPageRoute(builder: (BuildContext context) {
-//              return Upload(File(path));
-//            }));
-            },
-            child: Container(
-              margin: new EdgeInsets.symmetric(horizontal: 5.0),
-              child: Image.memory(
-                path,
-                width: MediaQuery.of(context).size.width / 4,
-                height: 200,
-                fit: BoxFit.cover,
-              ),
-            ),
-          );
-          ws.add(w);
-        }
-      }
-    }else{
-      if (datas != null && datas.length > 0) {
-        for (String path in datas) {
-          var w = GestureDetector(
-            onTap: () {
-//            Navigator.of(context)
-//                .push(MaterialPageRoute(builder: (BuildContext context) {
-//              return Upload(File(path));
-//            }));
-            },
-            child: Container(
-              margin: new EdgeInsets.symmetric(horizontal: 5.0),
-              child: Image.file(
-                File(path),
-                width: MediaQuery.of(context).size.width / 4,
-                height: 200,
-                fit: BoxFit.cover,
-              ),
-            ),
-          );
-          ws.add(w);
-        }
-      }
-    }
-
-
-    return ws;
+ Widget getWidges(path) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        margin: new EdgeInsets.symmetric(horizontal: 5.0),
+        child: Image.file(
+          File(path),
+          width: MediaQuery.of(context).size.width / 4,
+          height: 200,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
   }
 }
