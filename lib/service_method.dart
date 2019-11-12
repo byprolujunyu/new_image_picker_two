@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 
 /**
@@ -21,7 +20,7 @@ class _HomeState extends State<Home> {
   void _getGallery() async {
     var list = await MultiImagePicker.pickImageAndVideo();
     setState(() {
-      datas = list;
+      datas.addAll(list);
     });
   }
 
@@ -42,28 +41,53 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-      body: GridView.count(
-        crossAxisCount: 4,
-        padding: EdgeInsets.all(5.0),
-        children: datas.map((path) {
-          return getWidges(path);
-        }).toList(),
+      body: Center(
+        child: Wrap(
+          spacing: 5,
+          runSpacing: 5,
+          children: _getImages(),
+        ),
       ),
     );
   }
 
- Widget getWidges(path) {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        margin: new EdgeInsets.symmetric(horizontal: 5.0),
-        child: Image.file(
-          File(path),
-          width: MediaQuery.of(context).size.width / 4,
-          height: 200,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
+ _getImages() {
+   return datas.map(
+      (path) {
+        File pathfile = File(path);
+        return Stack(
+          children: <Widget>[
+            ClipRRect(
+              //圆角效果
+              borderRadius: BorderRadius.circular(5),
+              child: Image.file(pathfile, width: 120, height: 90, fit: BoxFit.fill),
+            ),
+            Positioned(
+              right: 5,
+              top: 5,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    datas.remove(path);
+                  });
+                },
+                child: ClipOval(
+                  //圆角删除按钮
+                  child: Container(
+                    padding: EdgeInsets.all(3),
+                    decoration: BoxDecoration(color: Colors.black54),
+                    child: Icon(
+                      Icons.close,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    ).toList();
   }
 }
