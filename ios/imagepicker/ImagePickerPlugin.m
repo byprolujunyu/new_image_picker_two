@@ -68,32 +68,53 @@ UIViewController *_viewController;
 
 - (void)imagePickerController:(TZImagePickerController *)picker didFinishPickingPhotos:(NSArray<UIImage *> *)photos sourceAssets:(NSArray *)assets isSelectOriginalPhoto:(BOOL)isSelectOriginalPhoto infos:(NSArray<NSDictionary *> *)infos{
     
-    NSLog(@"%@",photos);
-    NSMutableArray<FlutterStandardTypedData *> *list = [NSMutableArray array];
+//    NSLog(@"%@",photos);
+//    NSMutableArray<FlutterStandardTypedData *> *list = [NSMutableArray array];
+//    for(UIImage *image in photos){
+//        //NSData *imageData = UIImageJPEGRep\\(image);
+//        NSData *imageData = UIImagePNGRepresentation(image);
+//        NSLog(@"%@",imageData);
+//        FlutterStandardTypedData *data=[FlutterStandardTypedData typedDataWithBytes:imageData];
+//        [list addObject:data];
+//    }
+//
+//    self.result(list);
+    
+    BOOL saveAsPNG = NO;
+    NSMutableArray<NSString *> *list = [NSMutableArray array];
     for(UIImage *image in photos){
-        //NSData *imageData = UIImageJPEGRep\\(image);
-        NSData *imageData = UIImagePNGRepresentation(image);
-        NSString * str  =[[NSString alloc] initWithData:imageData encoding:NSUTF8StringEncoding];
-        NSLog(@"%@",imageData);
-        FlutterStandardTypedData *data=[FlutterStandardTypedData typedDataWithBytes:imageData];
-        [list addObject:data];
+       NSData *data =
+           saveAsPNG ? UIImagePNGRepresentation(image) : UIImageJPEGRepresentation(image, 1.0);
+       NSString *fileExtension = saveAsPNG ? @"image_picker_%@.png" : @"image_picker_%@.jpg";
+       NSString *guid = [[NSProcessInfo processInfo] globallyUniqueString];
+       NSString *tmpFile = [NSString stringWithFormat:fileExtension, guid];
+       NSString *tmpDirectory = NSTemporaryDirectory();
+       NSString *tmpPath = [tmpDirectory stringByAppendingPathComponent:tmpFile];
+
+        if ([[NSFileManager defaultManager] createFileAtPath:tmpPath contents:data attributes:nil]){
+            [list addObject:tmpPath];
+        }
+        
     }
-    
     self.result(list);
-    
 }
 
-// 选择视频的回调
--(void)imagePickerController:(TZImagePickerController *)picker
-       didFinishPickingVideo:(UIImage *)coverImage
-                sourceAssets:(PHAsset *)asset{
-    
-}
 
 -(void) tzImagePicker:(Boolean *)flag{
     
 }
     
+// 如果用户选择了一个视频，下面的handle会被执行
+// 如果系统版本大于iOS8，asset是PHAsset类的对象，否则是ALAsset类的对象
+- (void)imagePickerController:(TZImagePickerController *)picker didFinishPickingVideo:(UIImage *)coverImage sourceAssets:(id)asset{
+    NSLog(@"%@",asset);
+    NSLog(@"%@",coverImage);
+}
 
+// If user picking a gif image, this callback will be called.
+// 如果用户选择了一个gif图片，下面的handle会被执行
+- (void)imagePickerController:(TZImagePickerController *)picker didFinishPickingGifImage:(UIImage *)animatedImage sourceAssets:(id)asset{
+    
+}
 
 @end

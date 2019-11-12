@@ -19,7 +19,7 @@ class _HomeState extends State<Home> {
   bool isType = false;
 
   void _getGallery() async {
-    var list = await MultiImagePicker.pickImage();
+    var list = await MultiImagePicker.pickImageAndVideo();
     print(list);
     if(list == null)return;
     if (list[0] is String) {
