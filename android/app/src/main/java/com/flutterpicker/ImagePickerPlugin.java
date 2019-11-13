@@ -1,7 +1,9 @@
 package com.flutterpicker;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,14 +24,9 @@ public class ImagePickerPlugin implements MethodChannel.MethodCallHandler {
 
     public static void registerWith(PluginRegistry.Registrar registrar) {
         if (registrar.activity() == null) {
-            // If a background flutter view tries to register the plugin, there will be no activity from the registrar,
-            // we stop the registering process immediately because the ImagePicker requires an activity.
             return;
         }
         final MethodChannel channel = new MethodChannel(registrar.messenger(), CHANNEL);
-        //final File externalFilesDirectory = registrar.activity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        //final ExifDataCopier exifDataCopier = new ExifDataCopier();
-        //final ImageResizer imageResizer = new ImageResizer(externalFilesDirectory, exifDataCopier);
         final ImagePickerDelegate delegate = new ImagePickerDelegate(registrar.activity());
         registrar.addActivityResultListener(delegate);
         registrar.addRequestPermissionsResultListener(delegate);
@@ -53,7 +50,12 @@ public class ImagePickerPlugin implements MethodChannel.MethodCallHandler {
 
             @Override
             public void onActivityResumed(Activity activity) {
-
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    activity.requestPermissions(new String[]{
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.CAMERA},0);
+                }
             }
 
             @Override
@@ -90,12 +92,19 @@ public class ImagePickerPlugin implements MethodChannel.MethodCallHandler {
 
     @Override
     public void onMethodCall(@NonNull MethodCall methodCall, @NonNull MethodChannel.Result result) {
-        if ("getGallery".equals(methodCall.method)) {
-            delegate.chooseAllFromGallery(methodCall, result);
-        } else if ("getImage".equalsIgnoreCase(methodCall.method)) {
-            delegate.chooseImageFromGallery(methodCall, result);
-        } else if ("getVideo".equalsIgnoreCase(methodCall.method)) {
-            delegate.chooseVideoFromGallery(methodCall, result);
+        switch (methodCall.method) {
+            case "getGallery":
+                delegate.chooseAllFromGallery(methodCall, result);
+                break;
+            case "getImage":
+                delegate.chooseImageFromGallery(methodCall, result);
+                break;
+            case "getVideo":
+                delegate.chooseVideoFromGallery(methodCall, result);
+                break;
+            default:
+                result.notImplemented();
+                break;
         }
     }
 }
