@@ -19,7 +19,7 @@ class MainActivity: FlutterActivity() {
     super.onResume()
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       requestPermissions(arrayOf(
-              Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE),0)
+              Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.CAMERA),0)
     }
   }
 }
