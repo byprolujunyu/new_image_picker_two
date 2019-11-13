@@ -29,23 +29,35 @@ public class ImagePickerDelegate implements PluginRegistry.ActivityResultListene
         this.activity = activity;
     }
 
-   public void chooseImageFromGallery(MethodCall methodCall, MethodChannel.Result result) {
+    public void chooseAllFromGallery(MethodCall methodCall, MethodChannel.Result result) {
         this.methodCall = methodCall;
         this.pendingResult = result;
-        SelectorHelper.selectPictures(activity);
+        SelectorHelper.selectPictures(activity, PictureMimeType.ofAll());
+    }
+
+    public void chooseVideoFromGallery(MethodCall methodCall, MethodChannel.Result result) {
+        this.methodCall = methodCall;
+        this.pendingResult = result;
+        SelectorHelper.selectPictures(activity, PictureMimeType.ofVideo());
+    }
+
+    public void chooseImageFromGallery(MethodCall methodCall, MethodChannel.Result result) {
+        this.methodCall = methodCall;
+        this.pendingResult = result;
+        SelectorHelper.selectPictures(activity, PictureMimeType.ofImage());
     }
 
     @Override
     public boolean onActivityResult(int i, int i1, Intent data) {
         Log.d(TAG, "onActivityResult: ");
-        if (data == null){
-            pendingResult.error("","",new RuntimeException());
+        if (data == null) {
+            pendingResult.error("", "", new RuntimeException());
             return false;
         }
         List<String> backPics = new ArrayList<>();
         List<LocalMedia> localMedia = PictureSelector.obtainMultipleResult(data);
-        for (LocalMedia m:
-             localMedia) {
+        for (LocalMedia m :
+                localMedia) {
             backPics.add(m.getPath());
         }
         pendingResult.success(backPics);
@@ -58,11 +70,13 @@ public class ImagePickerDelegate implements PluginRegistry.ActivityResultListene
     }
 
     private static class SelectorHelper {
-        public static void selectPictures(Activity activity) {
+
+
+        public static void selectPictures(Activity activity, int mimeType) {
 
             PictureSelector.create(activity)
-                    .openGallery(PictureMimeType.ofAll())// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
-                   // .theme(themeId)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style
+                    .openGallery(mimeType)// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
+                    // .theme(themeId)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style
                     .maxSelectNum(9)// 最大图片选择数量
                     .minSelectNum(1)// 最小选择数量
                     .imageSpanCount(4)// 每行显示个数
@@ -81,15 +95,15 @@ public class ImagePickerDelegate implements PluginRegistry.ActivityResultListene
                     //.compressSavePath(getPath())//压缩图片保存地址
                     //.sizeMultiplier(0.5f)// glide 加载图片大小 0~1之间 如设置 .glideOverride()无效
                     .glideOverride(160, 160)// glide 加载宽高，越小图片列表越流畅，但会影响列表图片浏览的清晰度
-                //    .withAspectRatio(aspect_ratio_x, aspect_ratio_y)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
-                 //   .hideBottomControls(cb_hide.isChecked() ? false : true)// 是否显示uCrop工具栏，默认不显示
-                   // .isGif(cb_isGif.isChecked())// 是否显示gif图片
+                    //    .withAspectRatio(aspect_ratio_x, aspect_ratio_y)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
+                    //   .hideBottomControls(cb_hide.isChecked() ? false : true)// 是否显示uCrop工具栏，默认不显示
+                    // .isGif(cb_isGif.isChecked())// 是否显示gif图片
                     .freeStyleCropEnabled(true)// 裁剪框是否可拖拽
-                   // .circleDimmedLayer(cb_crop_circular.isChecked())// 是否圆形裁剪
-                   // .showCropFrame(cb_showCropFrame.isChecked())// 是否显示裁剪矩形边框 圆形裁剪时建议设为false
-                   // .showCropGrid(cb_showCropGrid.isChecked())// 是否显示裁剪矩形网格 圆形裁剪时建议设为false
-                   // .openClickSound(cb_voice.isChecked())// 是否开启点击声音
-                  //  .selectionMedia(selectList)// 是否传入已选图片
+                    // .circleDimmedLayer(cb_crop_circular.isChecked())// 是否圆形裁剪
+                    // .showCropFrame(cb_showCropFrame.isChecked())// 是否显示裁剪矩形边框 圆形裁剪时建议设为false
+                    // .showCropGrid(cb_showCropGrid.isChecked())// 是否显示裁剪矩形网格 圆形裁剪时建议设为false
+                    // .openClickSound(cb_voice.isChecked())// 是否开启点击声音
+                    //  .selectionMedia(selectList)// 是否传入已选图片
                     //.isDragFrame(false)// 是否可拖动裁剪框(固定)
 //                        .videoMaxSecond(15)
 //                        .videoMinSecond(10)

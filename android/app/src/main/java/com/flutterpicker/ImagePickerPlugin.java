@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
-
 import androidx.annotation.NonNull;
 
 import io.flutter.plugin.common.MethodCall;
@@ -92,7 +91,11 @@ public class ImagePickerPlugin implements MethodChannel.MethodCallHandler {
     @Override
     public void onMethodCall(@NonNull MethodCall methodCall, @NonNull MethodChannel.Result result) {
         if ("getGallery".equals(methodCall.method)) {
+            delegate.chooseAllFromGallery(methodCall, result);
+        } else if ("getImage".equalsIgnoreCase(methodCall.method)) {
             delegate.chooseImageFromGallery(methodCall, result);
+        } else if ("getVideo".equalsIgnoreCase(methodCall.method)) {
+            delegate.chooseVideoFromGallery(methodCall, result);
         }
     }
 }
